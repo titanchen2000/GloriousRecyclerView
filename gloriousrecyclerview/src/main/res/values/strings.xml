@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">RecylerViewDemo</string>
+    <string name="loading_more">Loading More</string>
+    <string name="load_more_failed">Loading Failed, Click To Reload</string>
+    <string name="no_more_data">No More Data</string>
+</resources>

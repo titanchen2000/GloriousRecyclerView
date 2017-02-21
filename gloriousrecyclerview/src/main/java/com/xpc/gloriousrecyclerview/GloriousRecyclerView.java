@@ -33,7 +33,6 @@ import android.widget.TextView;
  *
  * @author cxp
  */
-
 public class GloriousRecyclerView extends RecyclerView {
 
     private View mHeaderView;

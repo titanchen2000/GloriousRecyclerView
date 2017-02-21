@@ -153,15 +153,15 @@ public class GloriousRecyclerView extends RecyclerView {
             mGloriousAdapter.notifyDataSetChanged();
             if (hasMore) {
                 progressBar.setVisibility(VISIBLE);
-                tvLoadingMore.setText(R.string.loading_more);
+                tvLoadingMore.setText(R.string.glorious_recyclerview_loading_more);
                 this.addOnScrollListener(mOnScrollListener);
             } else {
                 mLoadMoreView.setOnClickListener(null);
                 progressBar.setVisibility(GONE);
-                tvLoadingMore.setText(R.string.no_more_data);
+                tvLoadingMore.setText(R.string.glorious_recyclerview_no_more_data);
             }
         } else {
-            tvLoadingMore.setText(R.string.load_more_failed);
+            tvLoadingMore.setText(R.string.glorious_recyclerview_load_more_failed);
             progressBar.setVisibility(GONE);
         }
     }
@@ -193,7 +193,7 @@ public class GloriousRecyclerView extends RecyclerView {
             } else if (viewType == ITEM_TYPE_FOOTER) {
                 return new GloriousViewHolder(mFooterView);
             } else if (viewType == ITEM_TYPE_LOAD_MORE) {
-                mLoadMoreView = LayoutInflater.from(getContext()).inflate(R.layout.layout_load_more, parent, false);
+                mLoadMoreView = LayoutInflater.from(getContext()).inflate(R.layout.glorious_recyclerview_layout_load_more, parent, false);
                 mLoadMoreView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -201,7 +201,7 @@ public class GloriousRecyclerView extends RecyclerView {
                             mIsLoadingMore = true;
                             mLoadMoreView.findViewById(R.id.pb_loading_more).setVisibility(VISIBLE);
                             TextView tvLoadingMore = (TextView) mLoadMoreView.findViewById(R.id.tv_loading_more);
-                            tvLoadingMore.setText(R.string.loading_more);
+                            tvLoadingMore.setText(R.string.glorious_recyclerview_loading_more);
                             tvLoadingMore.setVisibility(VISIBLE);
                             mLoadMoreListener.onLoadMore();
                         }

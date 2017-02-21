@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">RecylerViewDemo</string>
-    <string name="loading_more">加载更多</string>
-    <string name="load_more_failed">加载失败，点击重新加载</string>
-    <string name="no_more_data">所有数据已加载完毕</string>
+    <string name="glorious_recyclerview_loading_more">加载更多</string>
+    <string name="glorious_recyclerview_load_more_failed">加载失败，点击重新加载</string>
+    <string name="glorious_recyclerview_no_more_data">所有数据已加载完毕</string>
 </resources>

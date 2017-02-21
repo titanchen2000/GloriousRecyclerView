@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="GloriousRecyclerView">
+        <attr name="hideNoMoreData" format="boolean"/>
+        <attr name="loadMoreTextColor" format="color|reference"/>
+        <attr name="loadMoreTextSize" format="dimension"/>
+        <attr name="loadMoreBackground" format="color|reference"/>
+        <attr name="loadMoreIndeterminateDrawable" format="reference" />
+    </declare-styleable>
+
+</resources>

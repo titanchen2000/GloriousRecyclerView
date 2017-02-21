@@ -16,6 +16,9 @@
 package com.xpc.gloriousrecyclerview;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,10 +42,19 @@ public class GloriousRecyclerView extends RecyclerView {
     private View mFooterView;
     private View mEmptyView;
     private View mLoadMoreView;
+    private TextView mTvLoadMore;
+    private ProgressBar mPbLoadMore;
     private boolean mIsLoadMoreEnabled;
     private boolean mIsLoadingMore;
     private GloriousAdapter mGloriousAdapter;
     private AutoLoadMoreListener mLoadMoreListener;
+
+    //Hide the loadMore View When no more data
+    private boolean mIsHideNoMoreData;
+    private float mLoadMoreTextSize;
+    private int mLoadMoreTextColor;
+    private int mLoadMoreBackgroundColor;
+    private Drawable mLoadMorePbIndeterminateDrawable;
 
     private OnScrollListener mOnScrollListener = new OnScrollListener() {
         @Override
@@ -63,15 +75,32 @@ public class GloriousRecyclerView extends RecyclerView {
     };
 
     public GloriousRecyclerView(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public GloriousRecyclerView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public GloriousRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.GloriousRecyclerView);
+        mIsHideNoMoreData = a.getBoolean(R.styleable.GloriousRecyclerView_hideNoMoreData, false);
+        mLoadMoreTextColor = a.getColor(R.styleable.GloriousRecyclerView_loadMoreTextColor, 0xff888888);
+        mLoadMoreTextSize = a.getDimensionPixelSize(R.styleable.GloriousRecyclerView_loadMoreTextSize, getResources()
+                .getDimensionPixelSize(R.dimen.load_more_text_size));
+        mLoadMoreBackgroundColor = a.getColor(R.styleable.GloriousRecyclerView_loadMoreBackground, 0xffffffff);
+        int indeterminateDrawableResId = a.getResourceId(R.styleable
+                .GloriousRecyclerView_loadMoreIndeterminateDrawable, 0);
+        if (indeterminateDrawableResId != 0) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mLoadMorePbIndeterminateDrawable = getResources().getDrawable(indeterminateDrawableResId, context
+                        .getTheme());
+            } else {
+                mLoadMorePbIndeterminateDrawable = getResources().getDrawable(indeterminateDrawableResId);
+            }
+        }
+        a.recycle();
     }
 
     public void addHeaderView(View view) {
@@ -143,25 +172,26 @@ public class GloriousRecyclerView extends RecyclerView {
     private void notifyLoadMoreFinish(boolean success, boolean hasMore) {
         this.clearOnScrollListeners();
         mIsLoadingMore = false;
-        //如果启用下面这行代码，当没有更多数据时，“mLoadMoreView”将不再显示
-        //如果不启用,当没有更多数据时，“mLoadMoreView”将不再显示将显示“所有数据已加载完毕”
-//        mIsLoadMoreEnabled = hasMore;
-        TextView tvLoadingMore = (TextView) mLoadMoreView.findViewById(R.id.tv_loading_more);
-        ProgressBar progressBar = (ProgressBar) mLoadMoreView.findViewById(R.id.pb_loading_more);
         if (success) {
             mGloriousAdapter.notifyDataSetChanged();
             if (hasMore) {
-                progressBar.setVisibility(VISIBLE);
-                tvLoadingMore.setText(R.string.glorious_recyclerview_loading_more);
+                mPbLoadMore.setVisibility(VISIBLE);
+                mTvLoadMore.setText(R.string.glorious_recyclerview_loading_more);
                 this.addOnScrollListener(mOnScrollListener);
             } else {
-                mLoadMoreView.setOnClickListener(null);
-                progressBar.setVisibility(GONE);
-                tvLoadingMore.setText(R.string.glorious_recyclerview_no_more_data);
+                if (mIsHideNoMoreData) {
+                    //当没有更多数据时，“mLoadMoreView”将不再显示
+                    mIsLoadMoreEnabled = false;
+                } else {
+                    //当没有更多数据时，“mLoadMoreView”将不再显示将显示“所有数据已加载完毕”
+                    mLoadMoreView.setOnClickListener(null);
+                    mPbLoadMore.setVisibility(GONE);
+                    mTvLoadMore.setText(R.string.glorious_recyclerview_no_more_data);
+                }
             }
         } else {
-            tvLoadingMore.setText(R.string.glorious_recyclerview_load_more_failed);
-            progressBar.setVisibility(GONE);
+            mTvLoadMore.setText(R.string.glorious_recyclerview_load_more_failed);
+            mPbLoadMore.setVisibility(GONE);
         }
     }
 
@@ -192,20 +222,28 @@ public class GloriousRecyclerView extends RecyclerView {
             } else if (viewType == ITEM_TYPE_FOOTER) {
                 return new GloriousViewHolder(mFooterView);
             } else if (viewType == ITEM_TYPE_LOAD_MORE) {
-                mLoadMoreView = LayoutInflater.from(getContext()).inflate(R.layout.glorious_recyclerview_layout_load_more, parent, false);
+                mLoadMoreView = LayoutInflater.from(getContext()).inflate(R.layout
+                        .glorious_recyclerview_layout_load_more, parent, false);
+                mLoadMoreView.setBackgroundColor(mLoadMoreBackgroundColor);
+                mTvLoadMore = (TextView) mLoadMoreView.findViewById(R.id.tv_loading_more);
+                mPbLoadMore = (ProgressBar) mLoadMoreView.findViewById(R.id.pb_loading_more);
+                if (null != mLoadMorePbIndeterminateDrawable) {
+                    mPbLoadMore.setIndeterminateDrawable(mLoadMorePbIndeterminateDrawable);
+                }
                 mLoadMoreView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (!mIsLoadingMore) {
                             mIsLoadingMore = true;
-                            mLoadMoreView.findViewById(R.id.pb_loading_more).setVisibility(VISIBLE);
-                            TextView tvLoadingMore = (TextView) mLoadMoreView.findViewById(R.id.tv_loading_more);
-                            tvLoadingMore.setText(R.string.glorious_recyclerview_loading_more);
-                            tvLoadingMore.setVisibility(VISIBLE);
+                            mPbLoadMore.setVisibility(VISIBLE);
+                            mTvLoadMore.setText(R.string.glorious_recyclerview_loading_more);
+                            mTvLoadMore.setVisibility(VISIBLE);
                             mLoadMoreListener.onLoadMore();
                         }
                     }
                 });
+                mTvLoadMore.getPaint().setTextSize(mLoadMoreTextSize);
+                mTvLoadMore.setTextColor(mLoadMoreTextColor);
                 return new GloriousViewHolder(mLoadMoreView);
             } else {
                 return mOriginalAdapter.onCreateViewHolder(parent, viewType);

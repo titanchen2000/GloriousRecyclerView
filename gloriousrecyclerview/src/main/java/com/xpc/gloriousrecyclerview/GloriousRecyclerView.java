@@ -32,7 +32,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 /**
- * Created on 17-2-14
+ * A full function RecyclerView integration of Header, Footer,EmptyView and Up Swipe To Load More
  *
  * @author cxp
  */
@@ -49,11 +49,16 @@ public class GloriousRecyclerView extends RecyclerView {
     private GloriousAdapter mGloriousAdapter;
     private AutoLoadMoreListener mLoadMoreListener;
 
-    //Hide the loadMore View When no more data
+    /**
+     * Hide the mLoadMoreView When no more data
+     */
     private boolean mIsHideNoMoreData;
     private float mLoadMoreTextSize;
     private int mLoadMoreTextColor;
     private int mLoadMoreBackgroundColor;
+    /**
+     * The ProgressBar IndeterminateDrawable of mLoadMoreView
+     */
     private Drawable mLoadMorePbIndeterminateDrawable;
 
     private OnScrollListener mOnScrollListener = new OnScrollListener() {
@@ -84,6 +89,9 @@ public class GloriousRecyclerView extends RecyclerView {
 
     public GloriousRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        /*
+         *  Add the customize of mLoadMoreView from layout
+         */
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.GloriousRecyclerView);
         mIsHideNoMoreData = a.getBoolean(R.styleable.GloriousRecyclerView_hideNoMoreData, false);
         mLoadMoreTextColor = a.getColor(R.styleable.GloriousRecyclerView_loadMoreTextColor, 0xff888888);
@@ -97,27 +105,52 @@ public class GloriousRecyclerView extends RecyclerView {
                 mLoadMorePbIndeterminateDrawable = getResources().getDrawable(indeterminateDrawableResId, context
                         .getTheme());
             } else {
+                //noinspection deprecation
                 mLoadMorePbIndeterminateDrawable = getResources().getDrawable(indeterminateDrawableResId);
             }
         }
         a.recycle();
     }
 
+    public interface AutoLoadMoreListener {
+        void onLoadMore();
+    }
+
+    /**
+     * Add the {@link GloriousRecyclerView} headerView
+     *
+     * @param view headerView
+     */
     public void addHeaderView(View view) {
         mHeaderView = view;
         mGloriousAdapter.notifyItemInserted(0);
     }
 
+    /**
+     * Add the {@link GloriousRecyclerView} footerView
+     *
+     * @param view footerView
+     */
     public void addFooterView(View view) {
         mFooterView = view;
         mGloriousAdapter.notifyItemInserted(mGloriousAdapter.getItemCount() - 1);
     }
 
+    /**
+     * Add the {@link GloriousRecyclerView} emptyView
+     *
+     * @param view emptyView
+     */
     public void setEmptyView(View view) {
         mEmptyView = view;
         mGloriousAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Called this also means that loadMore enabled
+     *
+     * @param loadMoreListener loadMoreListener
+     */
     public void setLoadMoreListener(final AutoLoadMoreListener loadMoreListener) {
         if (null != loadMoreListener) {
             mLoadMoreListener = loadMoreListener;
@@ -126,6 +159,10 @@ public class GloriousRecyclerView extends RecyclerView {
         }
     }
 
+    /**
+     * @param adapter the adapter like normal RecyclerView you used {@link RecyclerView#setAdapter(Adapter)}.
+     * @see GloriousAdapter
+     */
     @Override
     public void setAdapter(Adapter adapter) {
         if (adapter != null) {
@@ -134,6 +171,66 @@ public class GloriousRecyclerView extends RecyclerView {
         super.setAdapter(mGloriousAdapter);
     }
 
+    /**
+     * Called when load more data failed
+     *
+     * @see #notifyLoadMoreFinish(boolean, boolean)
+     */
+    public void notifyLoadMoreFailed() {
+        notifyLoadMoreFinish(false, true);
+    }
+
+    /**
+     * Called when load more data successful
+     *
+     * @see #notifyLoadMoreFinish(boolean, boolean)
+     */
+    public void notifyLoadMoreSuccessful(boolean hasMore) {
+        notifyLoadMoreFinish(true, hasMore);
+    }
+
+    /**
+     * Notify mLoadMoreView do some UI change
+     *
+     * @param success Is load more data successful
+     * @param hasMore Whether has more data to be loaded
+     * @see #setLoadMoreListener(AutoLoadMoreListener)
+     */
+    private void notifyLoadMoreFinish(boolean success, boolean hasMore) {
+        this.clearOnScrollListeners();
+        mIsLoadingMore = false;
+        if (success) {
+            mGloriousAdapter.notifyDataSetChanged();
+            if (hasMore) {
+                mPbLoadMore.setVisibility(VISIBLE);
+                mTvLoadMore.setText(R.string.glorious_recyclerview_loading_more);
+                this.addOnScrollListener(mOnScrollListener);
+            } else {
+                if (mIsHideNoMoreData) {
+                    //the mLoadMoreView will GONE when no more data to be loaded
+                    mIsLoadMoreEnabled = false;
+                } else {
+                    //the mLoadMoreView will display "No More Data" when no more data to be loaded
+                    //and the progressBar will GONE
+                    mLoadMoreView.setOnClickListener(null);
+                    mPbLoadMore.setVisibility(GONE);
+                    mTvLoadMore.setText(R.string.glorious_recyclerview_no_more_data);
+                }
+            }
+        } else {
+            //the mLoadMoreView will display "Loading Failed, Click To Reload" when load more data failed
+            //and the progressBar will GONE
+            mTvLoadMore.setText(R.string.glorious_recyclerview_load_more_failed);
+            mPbLoadMore.setVisibility(GONE);
+        }
+    }
+
+    /**
+     * Find the last visible position depends on LayoutManger
+     *
+     * @return the last visible position
+     * @see #setLoadMoreListener(AutoLoadMoreListener)
+     */
     private int findLastVisibleItemPosition() {
         int position;
         if (getLayoutManager() instanceof LinearLayoutManager) {
@@ -151,7 +248,9 @@ public class GloriousRecyclerView extends RecyclerView {
     }
 
     /**
-     * 获得StaggeredGridLayoutManager最大的位置
+     * Find StaggeredGridLayoutManager the last visible position
+     *
+     * @see #findLastVisibleItemPosition()
      */
     private int findMaxPosition(int[] positions) {
         int maxPosition = 0;
@@ -161,44 +260,9 @@ public class GloriousRecyclerView extends RecyclerView {
         return maxPosition;
     }
 
-    public void notifyLoadMoreFailed() {
-        notifyLoadMoreFinish(false, true);
-    }
-
-    public void notifyLoadMoreSuccessful(boolean hasMore) {
-        notifyLoadMoreFinish(true, hasMore);
-    }
-
-    private void notifyLoadMoreFinish(boolean success, boolean hasMore) {
-        this.clearOnScrollListeners();
-        mIsLoadingMore = false;
-        if (success) {
-            mGloriousAdapter.notifyDataSetChanged();
-            if (hasMore) {
-                mPbLoadMore.setVisibility(VISIBLE);
-                mTvLoadMore.setText(R.string.glorious_recyclerview_loading_more);
-                this.addOnScrollListener(mOnScrollListener);
-            } else {
-                if (mIsHideNoMoreData) {
-                    //当没有更多数据时，“mLoadMoreView”将不再显示
-                    mIsLoadMoreEnabled = false;
-                } else {
-                    //当没有更多数据时，“mLoadMoreView”将不再显示将显示“所有数据已加载完毕”
-                    mLoadMoreView.setOnClickListener(null);
-                    mPbLoadMore.setVisibility(GONE);
-                    mTvLoadMore.setText(R.string.glorious_recyclerview_no_more_data);
-                }
-            }
-        } else {
-            mTvLoadMore.setText(R.string.glorious_recyclerview_load_more_failed);
-            mPbLoadMore.setVisibility(GONE);
-        }
-    }
-
-    public interface AutoLoadMoreListener {
-        void onLoadMore();
-    }
-
+    /**
+     * The decoration Adapter
+     */
     private class GloriousAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         private Adapter mOriginalAdapter;
@@ -208,7 +272,6 @@ public class GloriousRecyclerView extends RecyclerView {
         private int ITEM_TYPE_EMPTY = 3;
         private int ITEM_TYPE_LOAD_MORE = 4;
 
-        //聪明的人会发现我们这里用了一个装饰模式
         public GloriousAdapter(Adapter originalAdapter) {
             mOriginalAdapter = originalAdapter;
         }
@@ -224,12 +287,18 @@ public class GloriousRecyclerView extends RecyclerView {
             } else if (viewType == ITEM_TYPE_LOAD_MORE) {
                 mLoadMoreView = LayoutInflater.from(getContext()).inflate(R.layout
                         .glorious_recyclerview_layout_load_more, parent, false);
+                /*
+                 *  Customize the mLoadMoreView
+                 */
                 mLoadMoreView.setBackgroundColor(mLoadMoreBackgroundColor);
                 mTvLoadMore = (TextView) mLoadMoreView.findViewById(R.id.tv_loading_more);
                 mPbLoadMore = (ProgressBar) mLoadMoreView.findViewById(R.id.pb_loading_more);
                 if (null != mLoadMorePbIndeterminateDrawable) {
                     mPbLoadMore.setIndeterminateDrawable(mLoadMorePbIndeterminateDrawable);
                 }
+                mTvLoadMore.getPaint().setTextSize(mLoadMoreTextSize);
+                mTvLoadMore.setTextColor(mLoadMoreTextColor);
+                //Add reload strategy if load more failed
                 mLoadMoreView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -242,8 +311,6 @@ public class GloriousRecyclerView extends RecyclerView {
                         }
                     }
                 });
-                mTvLoadMore.getPaint().setTextSize(mLoadMoreTextSize);
-                mTvLoadMore.setTextColor(mLoadMoreTextColor);
                 return new GloriousViewHolder(mLoadMoreView);
             } else {
                 return mOriginalAdapter.onCreateViewHolder(parent, viewType);
@@ -265,13 +332,16 @@ public class GloriousRecyclerView extends RecyclerView {
 
         @Override
         public int getItemCount() {
+            //Get the real data counts
             int itemCount = mOriginalAdapter.getItemCount();
-            //加上其他各种View
+            /*
+             * Add the extra views counts
+             */
             if (null != mHeaderView) itemCount++;
             if (null != mFooterView) itemCount++;
             if (null != mEmptyView && itemCount == 0) {
+                //if the real data is empty, do not show loadMore any way
                 itemCount++;
-                //如果数据为空，不显示加载更多
                 return itemCount;
             }
             if (mIsLoadMoreEnabled) itemCount++;
@@ -280,9 +350,12 @@ public class GloriousRecyclerView extends RecyclerView {
 
         @Override
         public int getItemViewType(int position) {
+            /*
+             * The sequence is very important, do not change or you will get wrong type
+             */
             if (null != mHeaderView && position == 0) return ITEM_TYPE_HEADER;
             if (null != mFooterView && position == getItemCount() - 1) return ITEM_TYPE_FOOTER;
-            //如果数据为空，不显示加载更多
+            //if the real data is empty, do not show loadMore any way
             if (null != mEmptyView && mOriginalAdapter.getItemCount() == 0) {
                 return ITEM_TYPE_EMPTY;
             } else if (mIsLoadMoreEnabled && position == getLoadMorePosition()) {
@@ -299,11 +372,14 @@ public class GloriousRecyclerView extends RecyclerView {
         }
 
         /**
-         * 获取加载更多的Position
+         * Get the loadMore position,
          *
-         * @return 如果mFooterView为空，那么加载更多在最后一个，如果不为空，加载更多在倒数第二个
+         * if mFooterView is null , loadMore position will display at the end,
+         * or it will display at the last but one
+         *
+         * @return the loadMore position
          */
-        int getLoadMorePosition() {
+        private int getLoadMorePosition() {
             if (null == mFooterView) {
                 return getItemCount() - 1;
             } else {
@@ -312,7 +388,7 @@ public class GloriousRecyclerView extends RecyclerView {
         }
 
         /**
-         * ViewHolder 是一个抽象类
+         * GloriousViewHolder here is only let the extra views we add own a ViewHolder
          */
         class GloriousViewHolder extends ViewHolder {
 

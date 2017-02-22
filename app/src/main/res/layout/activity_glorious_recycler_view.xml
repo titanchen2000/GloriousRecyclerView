@@ -9,11 +9,16 @@
     <com.xpc.gloriousrecyclerview.GloriousRecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:hideNoMoreData="true"
-        app:loadMoreTextColor="#0080ff"
-        app:loadMoreTextSize="14sp"
-        app:loadMoreIndeterminateDrawable="@drawable/loading_icon_drawable"
-        />
+        android:layout_height="match_parent"/>
+
+    <!--    <com.xpc.gloriousrecyclerview.GloriousRecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:hideNoMoreData="true"
+            app:loadMoreTextColor="#0080ff"
+            app:loadMoreTextSize="14sp"
+            app:loadMoreBackground="#ccc"
+            app:loadMoreIndeterminateDrawable="@drawable/loading_icon_drawable"/>-->
 
 </RelativeLayout>

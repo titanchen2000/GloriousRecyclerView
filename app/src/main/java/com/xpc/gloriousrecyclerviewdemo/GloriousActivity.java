@@ -34,7 +34,7 @@ public class GloriousActivity extends AppCompatActivity {
         mAdapter = new NormalAdapter(this);
         mAdapter.addDatas(constructTestDatas());
 
-        final View footer = LayoutInflater.from(this).inflate(R.layout.layout_footer, recyclerView, false);
+        View footer = LayoutInflater.from(this).inflate(R.layout.layout_footer, recyclerView, false);
         View header = LayoutInflater.from(this).inflate(R.layout.layout_header, recyclerView, false);
         View empty = LayoutInflater.from(this).inflate(R.layout.layout_empty, recyclerView, false);
 
@@ -71,6 +71,7 @@ public class GloriousActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+                    //Mock the network
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();

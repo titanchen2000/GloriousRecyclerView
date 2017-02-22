@@ -28,6 +28,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -160,7 +161,7 @@ public class GloriousRecyclerView extends RecyclerView {
     }
 
     /**
-     * @param adapter the adapter like normal RecyclerView you used {@link RecyclerView#setAdapter(Adapter)}.
+     * @param adapter the adapter as normal RecyclerView you used {@link RecyclerView#setAdapter(Adapter)}.
      * @see GloriousAdapter
      */
     @Override

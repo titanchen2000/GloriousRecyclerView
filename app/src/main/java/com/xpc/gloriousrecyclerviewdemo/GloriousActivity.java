@@ -85,7 +85,7 @@ public class GloriousActivity extends AppCompatActivity {
                         datas.add("商 " + mLoadMoreTimes);
                         datas.add("周 " + mLoadMoreTimes);
                         datas.add("春秋 " + mLoadMoreTimes);
-                        datas.add("春秋 " + mLoadMoreTimes);
+                        datas.add("战国 " + mLoadMoreTimes);
                         datas.add("秦 " + mLoadMoreTimes);
                         boolean mockSuccess = new Random().nextBoolean();
                         if (mockSuccess) {

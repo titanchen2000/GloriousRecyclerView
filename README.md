@@ -2,7 +2,7 @@
 
 A full function RecyclerView integration of Header, Footer,EmptyView and Up Swipe To Load More
 
-### usage
+### Usage
 
 Step 1.  Add the dependency
 ```
@@ -35,10 +35,40 @@ or
 ```
 
 > `hideNoMoreData`: Hide the LoadMoreView When no more data, default is `true`
-> `loadMoreIndeterminateDrawable`: The ProgressBar IndeterminateDrawable of LoadMoreView
+
+> `loadMoreIndeterminateDrawable`: The ProgressBar Indeterminate Drawable of LoadMoreView
 
 Step 3.  The code in Activity, see [Demo](./app/src/main/java/com/xpc/gloriousrecyclerviewdemo/GloriousActivity.java)
 
+---
+### Feature
+
+#### `public void addHeaderView(android.view.View view)`
+Add the GloriousRecyclerView footerView 
+
+#### `public void addFooterView(android.view.View view)`
+Add the GloriousRecyclerView footerView
+
+#### `public void setEmptyView(android.view.View view)`
+Add the GloriousRecyclerView emptyView
+
+#### `public void setLoadMoreListener(GloriousRecyclerView.AutoLoadMoreListener loadMoreListener)`
+Listen the GloriousRecyclerView scrolled to the end and will trigger loadMoreListener.onLoadMore()
+
+Called this also means that loadMore enabled, the list bottom will add a loadMoreView
+ 
+#### `public void notifyLoadMoreSuccessful(boolean hasMore)`
+If you have ever called setLoadMoreListener, when load data successful, call this to to notify the loadMoreView change UI state
+
+boolean hasMore: Whether has more data to be loaded
+
+#### `public void notifyLoadMoreFailed()`
+If you have ever called setLoadMoreListener, when load data failed, call this to to notify the loadMoreView change UI state
+
+---
 ### Effect Picture
 
 ![](./GloriousRecyclerView.gif)
+
+![](./GloriousRecyclerView2.gif)
+

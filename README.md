@@ -43,26 +43,30 @@ Step 3.  The code in Activity, see [Demo](./app/src/main/java/com/xpc/gloriousre
 ---
 ### Feature
 
-#### `public void addHeaderView(android.view.View view)`
+* addHeaderView
+* addFooterView
+* setEmptyView
+* setLoadMoreListener
+
+
+`public void addHeaderView(android.view.View view)`
 Add the GloriousRecyclerView footerView 
 
-#### `public void addFooterView(android.view.View view)`
+`public void addFooterView(android.view.View view)`
 Add the GloriousRecyclerView footerView
 
-#### `public void setEmptyView(android.view.View view)`
+`public void setEmptyView(android.view.View view)`
 Add the GloriousRecyclerView emptyView
 
-#### `public void setLoadMoreListener(GloriousRecyclerView.AutoLoadMoreListener loadMoreListener)`
+`public void setLoadMoreListener(GloriousRecyclerView.AutoLoadMoreListener loadMoreListener)`
 Listen the GloriousRecyclerView scrolled to the end and will trigger loadMoreListener.onLoadMore()
-
 Called this also means that loadMore enabled, the list bottom will add a loadMoreView
  
-#### `public void notifyLoadMoreSuccessful(boolean hasMore)`
+`public void notifyLoadMoreSuccessful(boolean hasMore)`
 If you have ever called setLoadMoreListener, when load data successful, call this to to notify the loadMoreView change UI state
-
 boolean hasMore: Whether has more data to be loaded
 
-#### `public void notifyLoadMoreFailed()`
+`public void notifyLoadMoreFailed()`
 If you have ever called setLoadMoreListener, when load data failed, call this to to notify the loadMoreView change UI state
 
 ---

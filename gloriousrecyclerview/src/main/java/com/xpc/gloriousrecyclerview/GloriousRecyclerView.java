@@ -35,6 +35,7 @@ import android.widget.TextView;
 /**
  * A full function RecyclerView integration of Header, Footer,EmptyView and Up Swipe To Load More
  *
+ * @version 0.2.1
  * @author cxp
  */
 public class GloriousRecyclerView extends RecyclerView {
@@ -135,6 +136,27 @@ public class GloriousRecyclerView extends RecyclerView {
     public void addFooterView(View view) {
         mFooterView = view;
         mGloriousAdapter.notifyItemInserted(mGloriousAdapter.getItemCount() - 1);
+    }
+
+    /**
+     * Remove the {@link GloriousRecyclerView} headerView
+     */
+    public void removeHeaderView() {
+        if (mHeaderView != null) {
+            mHeaderView = null;
+            mGloriousAdapter.notifyItemRemoved(0);
+        }
+    }
+
+    /**
+     * Remove the {@link GloriousRecyclerView} footerView
+     *
+     */
+    public void removeFooterView() {
+        if (mFooterView != null) {
+            mFooterView = null;
+            mGloriousAdapter.notifyItemRemoved(mGloriousAdapter.getItemCount() - 1);
+        }
     }
 
     /**

@@ -46,6 +46,8 @@ Step 3.  The code in Activity, see [Demo](./app/src/main/java/com/xpc/gloriousre
 * addFooterView
 * setEmptyView
 * setLoadMoreListener
+* removeHeaderView
+* removeFooterView
 
 ```
 public class GloriousRecyclerView extends RecyclerView {
@@ -56,6 +58,14 @@ public class GloriousRecyclerView extends RecyclerView {
 
     public void addFooterView(android.view.View view){
         //Add the GloriousRecyclerView footerView
+    }
+
+    public void removeHeaderView(){
+        //Remove the GloriousRecyclerView footerView
+    }
+
+    public void removeFooterView(){
+        //Remove the GloriousRecyclerView footerView
     }
 
     public void setEmptyView(android.view.View view){

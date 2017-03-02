@@ -35,8 +35,8 @@ import android.widget.TextView;
 /**
  * A full function RecyclerView integration of Header, Footer,EmptyView and Up Swipe To Load More
  *
- * @version 0.2.1
  * @author cxp
+ * @version 0.2.2
  */
 public class GloriousRecyclerView extends RecyclerView {
 
@@ -124,8 +124,10 @@ public class GloriousRecyclerView extends RecyclerView {
      * @param view headerView
      */
     public void addHeaderView(View view) {
-        mHeaderView = view;
-        mGloriousAdapter.notifyItemInserted(0);
+        if (view != null && mHeaderView == null) {
+            mHeaderView = view;
+            mGloriousAdapter.notifyItemInserted(0);
+        }
     }
 
     /**
@@ -134,8 +136,10 @@ public class GloriousRecyclerView extends RecyclerView {
      * @param view footerView
      */
     public void addFooterView(View view) {
-        mFooterView = view;
-        mGloriousAdapter.notifyItemInserted(mGloriousAdapter.getItemCount() - 1);
+        if (view != null && mFooterView == null) {
+            mFooterView = view;
+            mGloriousAdapter.notifyItemInserted(mGloriousAdapter.getItemCount() - 1);
+        }
     }
 
     /**
@@ -150,7 +154,6 @@ public class GloriousRecyclerView extends RecyclerView {
 
     /**
      * Remove the {@link GloriousRecyclerView} footerView
-     *
      */
     public void removeFooterView() {
         if (mFooterView != null) {
@@ -396,7 +399,7 @@ public class GloriousRecyclerView extends RecyclerView {
 
         /**
          * Get the loadMore position,
-         *
+         * <p>
          * if mFooterView is null , loadMore position will display at the end,
          * or it will display at the last but one
          *

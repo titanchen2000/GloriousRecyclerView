@@ -36,7 +36,7 @@ import android.widget.TextView;
  * A full function RecyclerView integration of Header, Footer,EmptyView and Up Swipe To Load More
  *
  * @author cxp
- * @version 0.2.2
+ * @version 0.2.4
  * @see <a href="https://github.com/titanchen2000/GloriousRecyclerView">Source code in GitHub</a>
  */
 public class GloriousRecyclerView extends RecyclerView {

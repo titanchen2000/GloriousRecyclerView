@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">GloriousRecyclerViewDemo</string>
+    <string name="loading_more_failed">Oh, Some thing error, click to reload</string>
 </resources>

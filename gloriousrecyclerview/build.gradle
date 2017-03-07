@@ -35,7 +35,7 @@ publish {
     userOrg = 'titanchen2000'
     groupId = 'com.xpc'
     artifactId = 'gloriousrecyclerview'
-    publishVersion = '0.2.4'
+    publishVersion = '0.2.5'
     desc = 'A full function RecyclerView integration of Header, Footer,EmptyView,Pull To Refresh and Up Swipe To Load More'
     website = 'https://github.com/titanchen2000/GloriousRecyclerView'
 }

@@ -24,11 +24,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -36,7 +36,7 @@ import android.widget.TextView;
  * A full function RecyclerView integration of Header, Footer,EmptyView and Up Swipe To Load More
  *
  * @author cxp
- * @version 0.2.4
+ * @version 0.2.5
  * @see <a href="https://github.com/titanchen2000/GloriousRecyclerView">Source code in GitHub</a>
  */
 public class GloriousRecyclerView extends RecyclerView {
@@ -56,9 +56,16 @@ public class GloriousRecyclerView extends RecyclerView {
      * Hide the mLoadMoreView When no more data
      */
     private boolean mIsHideNoMoreData;
+
     private float mLoadMoreTextSize;
     private int mLoadMoreTextColor;
     private int mLoadMoreBackgroundColor;
+    private String mLoadingMoreText;
+    private String mLoadMoreFailedText;
+    private String mLoadAllCompleteText;
+    private int mLastPbLoadMoreVisibility;
+    private String mLastPbTvLoadMoreText;
+
     /**
      * The ProgressBar IndeterminateDrawable of mLoadMoreView
      */
@@ -112,6 +119,12 @@ public class GloriousRecyclerView extends RecyclerView {
                 mLoadMorePbIndeterminateDrawable = getResources().getDrawable(indeterminateDrawableResId);
             }
         }
+        mLoadingMoreText = a.getString(R.styleable.GloriousRecyclerView_loadingMoreText);
+        mLoadMoreFailedText = a.getString(R.styleable.GloriousRecyclerView_loadMoreFailedText);
+        mLoadAllCompleteText = a.getString(R.styleable.GloriousRecyclerView_loadAllCompleteText);
+        if (TextUtils.isEmpty(mLoadingMoreText)) mLoadingMoreText = getResources().getString(R.string.glorious_recyclerview_loading_more);
+        if (TextUtils.isEmpty(mLoadMoreFailedText)) mLoadMoreFailedText = getResources().getString(R.string.glorious_recyclerview_load_more_failed);
+        if (TextUtils.isEmpty(mLoadAllCompleteText)) mLoadAllCompleteText = getResources().getString(R.string.glorious_recyclerview_no_more_data);
         a.recycle();
     }
 
@@ -230,7 +243,7 @@ public class GloriousRecyclerView extends RecyclerView {
             mGloriousAdapter.notifyDataSetChanged();
             if (hasMore) {
                 mPbLoadMore.setVisibility(VISIBLE);
-                mTvLoadMore.setText(R.string.glorious_recyclerview_loading_more);
+                mTvLoadMore.setText(mLoadingMoreText);
                 this.addOnScrollListener(mOnScrollListener);
             } else {
                 if (mIsHideNoMoreData) {
@@ -241,15 +254,17 @@ public class GloriousRecyclerView extends RecyclerView {
                     //and the progressBar will GONE
                     mLoadMoreView.setOnClickListener(null);
                     mPbLoadMore.setVisibility(GONE);
-                    mTvLoadMore.setText(R.string.glorious_recyclerview_no_more_data);
+                    mTvLoadMore.setText(mLoadAllCompleteText);
                 }
             }
         } else {
             //the mLoadMoreView will display "Loading Failed, Click To Reload" when load more data failed
             //and the progressBar will GONE
-            mTvLoadMore.setText(R.string.glorious_recyclerview_load_more_failed);
+            mTvLoadMore.setText(mLoadMoreFailedText);
             mPbLoadMore.setVisibility(GONE);
         }
+        mLastPbLoadMoreVisibility = mPbLoadMore.getVisibility();
+        mLastPbTvLoadMoreText = mTvLoadMore.getText().toString();
     }
 
     /**
@@ -325,6 +340,8 @@ public class GloriousRecyclerView extends RecyclerView {
                 }
                 mTvLoadMore.getPaint().setTextSize(mLoadMoreTextSize);
                 mTvLoadMore.setTextColor(mLoadMoreTextColor);
+                mTvLoadMore.setText(mLoadingMoreText);
+
                 //Add reload strategy if load more failed
                 mLoadMoreView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -332,12 +349,19 @@ public class GloriousRecyclerView extends RecyclerView {
                         if (!mIsLoadingMore) {
                             mIsLoadingMore = true;
                             mPbLoadMore.setVisibility(VISIBLE);
-                            mTvLoadMore.setText(R.string.glorious_recyclerview_loading_more);
+                            mTvLoadMore.setText(mLoadingMoreText);
                             mTvLoadMore.setVisibility(VISIBLE);
                             mLoadMoreListener.onLoadMore();
                         }
                     }
                 });
+
+                //when remove footerView will trigger onCreateViewHolder()
+                if (!TextUtils.isEmpty(mLastPbTvLoadMoreText)) {
+                    mTvLoadMore.setText(mLastPbTvLoadMoreText);
+                    mPbLoadMore.setVisibility(mLastPbLoadMoreVisibility);
+                }
+
                 return new GloriousViewHolder(mLoadMoreView);
             } else {
                 return mOriginalAdapter.onCreateViewHolder(parent, viewType);

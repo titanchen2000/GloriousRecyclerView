@@ -34,9 +34,15 @@ public class GloriousActivity extends AppCompatActivity {
         mAdapter = new NormalAdapter(this);
         mAdapter.addDatas(constructTestDatas());
 
-        View footer = LayoutInflater.from(this).inflate(R.layout.layout_footer, recyclerView, false);
         View header = LayoutInflater.from(this).inflate(R.layout.layout_header, recyclerView, false);
         View empty = LayoutInflater.from(this).inflate(R.layout.layout_empty, recyclerView, false);
+        View footer = LayoutInflater.from(this).inflate(R.layout.layout_footer, recyclerView, false);
+        footer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerView.removeFooterView();
+            }
+        });
 
         recyclerView.setAdapter(mAdapter);
         recyclerView.addHeaderView(header);

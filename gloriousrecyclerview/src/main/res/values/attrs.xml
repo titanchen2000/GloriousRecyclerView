@@ -4,6 +4,9 @@
     <declare-styleable name="GloriousRecyclerView">
         <attr name="hideNoMoreData" format="boolean"/>
         <attr name="loadMoreTextColor" format="color|reference"/>
+        <attr name="loadingMoreText" format="string|reference"/>
+        <attr name="loadMoreFailedText" format="string|reference"/>
+        <attr name="loadAllCompleteText" format="string|reference"/>
         <attr name="loadMoreTextSize" format="dimension"/>
         <attr name="loadMoreBackground" format="color|reference"/>
         <attr name="loadMoreIndeterminateDrawable" format="reference" />

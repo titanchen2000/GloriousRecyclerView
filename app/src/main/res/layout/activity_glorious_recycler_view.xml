@@ -6,21 +6,27 @@
     android:layout_height="match_parent"
     android:background="#888">
 
-    <com.xpc.gloriousrecyclerview.GloriousRecyclerView
-        android:id="@+id/recycler_view"
+    <com.xpc.gloriousrecyclerviewdemo.ScrollChildSwipeRefreshLayout
+        android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
 
-<!--        <com.xpc.gloriousrecyclerview.GloriousRecyclerView
+        <!--<com.xpc.gloriousrecyclerview.GloriousRecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>-->
+
+        <com.xpc.gloriousrecyclerview.GloriousRecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:hideNoMoreData="true"
+            app:loadAllCompleteText="Load Complete"
+            app:loadMoreBackground="#ccc"
+            app:loadMoreFailedText="@string/loading_more_failed"
+            app:loadMoreIndeterminateDrawable="@drawable/loading_icon_drawable"
             app:loadMoreTextColor="#0080ff"
             app:loadMoreTextSize="14sp"
-            app:loadingMoreText="Loading More, Pls wait"
-            app:loadMoreFailedText="@string/loading_more_failed"
-            app:loadMoreBackground="#ccc"
-            app:loadMoreIndeterminateDrawable="@drawable/loading_icon_drawable"/>-->
-
+            app:loadingMoreText="Loading More, Pls wait"/>
+    </com.xpc.gloriousrecyclerviewdemo.ScrollChildSwipeRefreshLayout>
 </RelativeLayout>

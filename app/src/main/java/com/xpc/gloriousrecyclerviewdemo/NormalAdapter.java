@@ -17,6 +17,7 @@ import java.util.List;
 public class NormalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context mContext;
     private List<String> mDatas = new ArrayList<>();
+    private OnItemClickListener mOnItemClickListener;
 
     public NormalAdapter(Context context) {
         mContext = context;
@@ -27,7 +28,19 @@ public class NormalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         notifyDataSetChanged();
     }
 
-    @Override
+    public void setDatas(List<String> datas) {
+        mDatas = datas;
+        notifyDataSetChanged();
+    }
+
+    public List<String> getDatas() {
+        return mDatas;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mOnItemClickListener = listener;
+    }
+
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(mContext).inflate(R.layout.layout_recyclerview_item_view, parent, false);
         return new ViewHolder(v);
@@ -48,8 +61,15 @@ public class NormalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         ViewHolder(View v) {
             super(v);
-            mTextView = (TextView)
-                    v.findViewById(R.id.item_title);
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (null != mOnItemClickListener) {
+                        mOnItemClickListener.OnItemClick(getAdapterPosition() - 1);
+                    }
+                }
+            });
+            mTextView = (TextView) v.findViewById(R.id.item_title);
         }
     }
 }

@@ -29,10 +29,13 @@ or
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:hideNoMoreData="true"
+    app:loadAllCompleteText="Load Complete"
+    app:loadMoreBackground="#ccc"
+    app:loadMoreFailedText="@string/loading_more_failed"
+    app:loadMoreIndeterminateDrawable="@drawable/loading_icon_drawable"
     app:loadMoreTextColor="#0080ff"
     app:loadMoreTextSize="14sp"
-    app:loadMoreBackground="#ccc"
-    app:loadMoreIndeterminateDrawable="@drawable/loading_icon_drawable"/>
+    app:loadingMoreText="Loading More, Pls wait"/>
 ```
 
 > `hideNoMoreData`: Hide the LoadMoreView When no more data, default is `true`

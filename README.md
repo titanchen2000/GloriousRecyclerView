@@ -21,7 +21,7 @@ Step 2.  Add the in xml
     android:layout_height="match_parent"/>
 ```
 
-or
+or customize loadMoreView like this
 
 ```xml
 <com.xpc.gloriousrecyclerview.GloriousRecyclerView
@@ -94,6 +94,12 @@ public class GloriousRecyclerView extends RecyclerView {
 }
 ```
 
+### Extra 
+
+Pull To Refresh
+
+see [Demo](./app/src/main/java/com/xpc/gloriousrecyclerviewdemo/GloriousActivity.java)
+
 ---
 ### Effect Picture
 
@@ -101,3 +107,4 @@ public class GloriousRecyclerView extends RecyclerView {
 
 ![](./GloriousRecyclerView2.gif)
 
+![](./Pull2Refresh.gif)

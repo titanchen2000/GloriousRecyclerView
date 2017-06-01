@@ -122,9 +122,12 @@ public class GloriousRecyclerView extends RecyclerView {
         mLoadingMoreText = a.getString(R.styleable.GloriousRecyclerView_loadingMoreText);
         mLoadMoreFailedText = a.getString(R.styleable.GloriousRecyclerView_loadMoreFailedText);
         mLoadAllCompleteText = a.getString(R.styleable.GloriousRecyclerView_loadAllCompleteText);
-        if (TextUtils.isEmpty(mLoadingMoreText)) mLoadingMoreText = getResources().getString(R.string.glorious_recyclerview_loading_more);
-        if (TextUtils.isEmpty(mLoadMoreFailedText)) mLoadMoreFailedText = getResources().getString(R.string.glorious_recyclerview_load_more_failed);
-        if (TextUtils.isEmpty(mLoadAllCompleteText)) mLoadAllCompleteText = getResources().getString(R.string.glorious_recyclerview_no_more_data);
+        if (TextUtils.isEmpty(mLoadingMoreText))
+            mLoadingMoreText = getResources().getString(R.string.glorious_recyclerview_loading_more);
+        if (TextUtils.isEmpty(mLoadMoreFailedText))
+            mLoadMoreFailedText = getResources().getString(R.string.glorious_recyclerview_load_more_failed);
+        if (TextUtils.isEmpty(mLoadAllCompleteText))
+            mLoadAllCompleteText = getResources().getString(R.string.glorious_recyclerview_no_more_data);
         a.recycle();
     }
 
@@ -236,11 +239,27 @@ public class GloriousRecyclerView extends RecyclerView {
      * @param hasMore Whether has more data to be loaded
      * @see #setLoadMoreListener(AutoLoadMoreListener)
      */
-    private void notifyLoadMoreFinish(boolean success, boolean hasMore) {
+    private void notifyLoadMoreFinish(final boolean success, final boolean hasMore) {
         this.clearOnScrollListeners();
         mIsLoadingMore = false;
         if (success) {
             mGloriousAdapter.notifyDataSetChanged();
+        }
+        if (null != mLoadMoreView) {
+            changeLoadMoreUi(success, hasMore);
+        } else {
+            mGloriousAdapter.setLoadMoreInflateListener(new LoadMoreInflateListener() {
+                @Override
+                public void onLoadMoreInflated() {
+                    changeLoadMoreUi(success, hasMore);
+                    mGloriousAdapter.setLoadMoreInflateListener(null);
+                }
+            });
+        }
+    }
+
+    private void changeLoadMoreUi(boolean success, boolean hasMore) {
+        if (success) {
             if (hasMore) {
                 mPbLoadMore.setVisibility(VISIBLE);
                 mTvLoadMore.setText(mLoadingMoreText);
@@ -306,7 +325,6 @@ public class GloriousRecyclerView extends RecyclerView {
      * The decoration Adapter
      */
     private class GloriousAdapter extends RecyclerView.Adapter<ViewHolder> {
-
         private Adapter mOriginalAdapter;
         private int ITEM_TYPE_NORMAL = 0;
         private int ITEM_TYPE_HEADER = 1;
@@ -314,8 +332,14 @@ public class GloriousRecyclerView extends RecyclerView {
         private int ITEM_TYPE_EMPTY = 3;
         private int ITEM_TYPE_LOAD_MORE = 4;
 
+        private LoadMoreInflateListener mLoadMoreInflateListener;
+
         public GloriousAdapter(Adapter originalAdapter) {
             mOriginalAdapter = originalAdapter;
+        }
+
+        protected void setLoadMoreInflateListener(LoadMoreInflateListener listener) {
+            mLoadMoreInflateListener = listener;
         }
 
         @Override
@@ -360,6 +384,10 @@ public class GloriousRecyclerView extends RecyclerView {
                 if (!TextUtils.isEmpty(mLastPbTvLoadMoreText)) {
                     mTvLoadMore.setText(mLastPbTvLoadMoreText);
                     mPbLoadMore.setVisibility(mLastPbLoadMoreVisibility);
+                }
+
+                if (null != mLoadMoreInflateListener) {
+                    mLoadMoreInflateListener.onLoadMoreInflated();
                 }
 
                 return new GloriousViewHolder(mLoadMoreView);

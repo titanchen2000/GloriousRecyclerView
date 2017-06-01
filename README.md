@@ -7,8 +7,8 @@ A full function RecyclerView integration of Header, Footer,EmptyView and Pull Up
 Step 1.  Add the dependency
 ```
 dependencies {
-    compile 'com.xpc:gloriousrecyclerview:0.2.5@aar'
-    compile 'com.android.support:recyclerview-v7:24.2.0'
+    compile 'com.xpc:gloriousrecyclerview:0.2.6@aar'
+    compile 'com.android.support:recyclerview-v7:24.2.1'
 }
 ```
 
